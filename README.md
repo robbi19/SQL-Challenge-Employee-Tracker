@@ -31,7 +31,6 @@ I WANT to be able to view and manage the departments, roles, and employees in my
 SO THAT I can organize and plan my business
 ```
 
-  Demo of the application Video and deploy link *
 
 #### Summary 
 ```
@@ -56,9 +55,15 @@ THEN I am prompted to select an employee to update and their new role and this i
 
 ## Installation
 ```
-1. Run `npm install` before using. This application uses:  [Inquirer](https://www.npmjs.com/package/inquirer),[MySQL2 package](https://www.npmjs.com/package/mysql2)and [console.table package](https://www.npmjs.com/package/console.table).
-2. Set up the database using the files found in [`sql`](./sql). A [`seed.sql`](./sql/seed.sql) file is provided for dummy data.
-3. Configure the `user` and `password` properties found in [`connectionDetails.js`](./assets/constants/connectionDetails.js).
+1. npm init
+
+2. npm install inquirer
+
+3. npm install mysql2
+
+4.Run the following command at the root of your project and answer the prompted questions:
+
+npm start
 ```
 
 ## Website
