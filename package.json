@@ -5,7 +5,12 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node server.js",
+    "migrate": "mysql db/employees.db < db/schema.sql",
+    "seed": "mysql db/employees.db < db/seeds.sql",
+    "db": "mysql db/employees.db",
+    "watch": "nodemon server.js"
+    
   },
   "repository": {
     "type": "git",
