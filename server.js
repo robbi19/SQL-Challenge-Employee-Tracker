@@ -1,5 +1,5 @@
 const inquirer = require('inquirer');
-const db = require('./db/connection');
+const db = require('./connection');
 
 // Start server after DB connection
 db.connect(err => {
