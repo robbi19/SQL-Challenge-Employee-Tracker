@@ -1,34 +1,28 @@
-DROP DATABASE IF EXISTS employee_tracker_db;
-
+DROP DATABASE IF EXISTS employee_tracker_db_db;
 CREATE DATABASE employee_tracker_db;
 
 USE employee_tracker_db;
 
-/*   department table area*/
 CREATE TABLE department (
-    id INT AUTO_INCREMENT,
-    name VARCHAR(30),
-    PRIMARY KEY(id)
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(30) NOT NULL
 );
 
-/*roles table area*/
-CREATE TABLE roles (
-    id INT AUTO_INCREMENT,
-    title VARCHAR(30),
-    salary DECIMAL,
+CREATE TABLE role (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(30) NOT NULL,
+    salary DECIMAL NOT NULL,
     department_id INT,
-    PRIMARY KEY(id),
-    FOREIGN KEY(department_id) REFERENCES department(id)
+    FOREIGN KEY (department_id)
+    REFERENCES department(id)
 );
 
-/*  table area*/
 CREATE TABLE employee (
-    id INT AUTO_INCREMENT,
-    first_name VARCHAR(30),
-    last_name VARCHAR(30),
-    role_id INT,
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    first_name VARCHAR(30) NOT NULL,
+    last_name VARCHAR(30) NOT NULL,
+    role_id INT NOT NULL,
     manager_id INT,
-    PRIMARY KEY(id),
-    FOREIGN KEY(role_id) REFERENCES roles(id),
-    FOREIGN KEY(manager_id) REFERENCES employee(id)
+    FOREIGN KEY (role_id) REFERENCES role(id),
+    FOREIGN KEY (manager_id) REFERENCES employee(id)
 );
