@@ -1,45 +1,43 @@
-import { prompt } from '';
 const util = require('util');
-import "console.table";
+const consoleTable = require("console.table");
+const { createConnection } = require('mysql2');
+const { promisify } = require('util');
+const { prompt } = require('inquirer');
 
 // Connect to database
-const db = mysql.createConnection(
-  {
-      host: 'localhost',
-      user: 'root',
-      password: '',
-      database: 'employee_tracker_db'
-  },
-  console.log('Connected to employee_tracker_db database.')
-);
+const db = createConnection({
+  host: 'localhost',
+  user: 'root',
+  password: '',
+  database: 'employee_tracker_db'
+});
 
-connection.connect(function (err) {
+db.query = util.promisify(db.query);
+
+// Connect database
+db.connect(function (err) {
   if (err) throw err;
-  console.log("Connection successful!");
+  console.log("Connected to employee_tracker_db database.");
   mainMenu();
 });
 
-connection.query = promisify(connection.query);
-
-
 // Main Menu function
 function mainMenu() {
-
   prompt({
-      name: "start",
-      type: "rawlist",
-      message: "What would you like to do?",
-      choices: [
-        "View All Employees",
-        "View All Roles",
-        "View All Departments",
-        "Add Employee",
-        "Add Role",
-        "Add Department",
-        "Update Employee Role",
-        "EXIT",
-      ],
-    })
+    name: "start",
+    type: "rawlist",
+    message: "What would you like to do?",
+    choices: [
+      "View All Employees",
+      "View All Roles",
+      "View All Departments",
+      "Add Employee",
+      "Add Role",
+      "Add Department",
+      "Update Employee Role",
+      "EXIT",
+    ],
+  })
     .then(function (answer) {
       switch (answer.start) {
         case "View All Employees":
@@ -55,11 +53,11 @@ function mainMenu() {
           break;
 
         case "Add Employee":
-          addEmployee();
+          addEmployee(); // Implement this function
           break;
 
         case "Add Role":
-          addRole();
+          addRole(); // Implement this function
           break;
 
         case "Add Department":
@@ -67,24 +65,22 @@ function mainMenu() {
           break;
 
         case "Update Employee Role":
-          updateEmployee();
+          updateEmployee(); // Implement this function
           break;
 
         case "EXIT":
           console.log(
             "Thank you for using the company search database. Have a nice day!"
           );
-          connection.end();
+          db.end(); // Close the database connection
       }
     });
 }
 
-
-
 function viewEmployees() {
   const queryStr =
     "SELECT employees.id, employees.first_name AS 'First Name', employees.last_name AS 'Last Name', roles.title AS 'Title', departments.name AS 'Department', roles.salary AS 'Salary', CONCAT(manager.first_name, ' ' , manager.last_name) AS 'Manager' FROM employees LEFT JOIN roles ON employees.role_id = roles.id LEFT JOIN departments ON roles.department_id = departments.id LEFT JOIN employees manager ON manager.id = employees.manager_id";
-  connection.query(queryStr, function (err, data) {
+  db.query(queryStr, function (err, data) {
     if (err) throw err;
     console.table(data);
     mainMenu();
@@ -94,7 +90,7 @@ function viewEmployees() {
 function viewRoles() {
   const queryStr =
     "SELECT roles.id, roles.title AS 'Title', roles.salary As 'Salary' FROM roles ORDER BY roles.id";
-  connection.query(queryStr, function (err, data) {
+  db.query(queryStr, function (err, data) {
     if (err) throw err;
     console.table(data);
     mainMenu();
@@ -104,24 +100,23 @@ function viewRoles() {
 function viewDepartments() {
   const queryStr =
     "SELECT departments.id, departments.name AS 'Department' FROM departments ORDER BY departments.id";
-  connection.query(queryStr, function (err, data) {
+  db.query(queryStr, function (err, data) {
     if (err) throw err;
     console.table(data);
     mainMenu();
   });
 }
 
-
-//function for Department
+// Function for adding a department
 function addDepartment() {
   prompt({
-      name: "department",
-      type: "input",
-      message: "What department would you like to add today?",
-    })
+    name: "department",
+    type: "input",
+    message: "What department would you like to add today?",
+  })
     .then(function (answer) {
       let queryStr = "INSERT INTO departments (name) VALUES (?)";
-      connection.query(queryStr, answer.department, function (err, res) {
+      db.query(queryStr, answer.department, function (err, res) {
         if (err) throw err;
         console.log(answer.department + " has been added.");
         mainMenu();
@@ -130,19 +125,18 @@ function addDepartment() {
 }
 
 
-
 // function to add an Employee
 function addEmployee() {
   const roles = [];
   const managers = [];
   const queryRoles = "SELECT title FROM roles;";
-  connection.query(queryRoles, function (err, res) {
+  db.query(queryRoles, function (err, res) {
     if (err) throw err;
     for (let i = 0; i < res.length; i++) {
       roles.push(res[i].title);
     }
     const queryManager = "SELECT first_name, last_name FROM employees";
-    connection.query(queryManager, function (err, res) {
+    db.query(queryManager, function (err, res) {
       if (err) throw err;
       for (let i = 0; i < res.length; i++) {
         managers.push(res[i].first_name + " " + res[i].last_name);
@@ -181,9 +175,5 @@ function addEmployee() {
               if (err) throw err;
               console.log("Great !Successfully added an employee!");
               mainMenu();
-            }
-          );
-        });
-    });
-  });
-}
+
+            }}
