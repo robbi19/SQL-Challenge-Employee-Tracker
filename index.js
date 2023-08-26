@@ -1,13 +1,13 @@
-import util from 'util'; 
-import consoleTable from 'console.table'; 
+import util from 'util';
+import consoleTable from 'console.table';
 import { createConnection } from 'mysql2/promise';
-import inquirer from 'inquirer';
+import { prompt } from 'inquirer';
 
-// Connect to database
+// Connect to the database
 const db = createConnection({
   host: 'localhost',
   user: 'root',
-  password: '',
+  password: '', 
   database: 'employee_tracker_db',
 });
 
@@ -15,70 +15,71 @@ const db = createConnection({
 async function connectToDatabase() {
   try {
     await db.connect();
-    console.log('Connected to employee_tracker_db database.');
+    console.log('Connected to the employee_tracker_db database.');
     mainMenu();
   } catch (err) {
-    throw err;
+    console.error('Error connecting to the database:', err);
+    process.exit(1); 
   }
 }
-connectToDatabase();
+
 
 // Main Menu function
-async function mainMenu() { 
+async function mainMenu() {
   try {
     const answer = await inquirer.prompt({
-      name: "start",
-      type: "rawlist",
-      message: "What would you like to do?",
+      name: 'start',
+      type: 'list',
+      message: 'What would you like to do?',
       choices: [
-        "View All Employees",
-        "View All Roles",
-        "View All Departments",
-        "Add Employee",
-        "Add Role",
-        "Add Department",
-        "Update Employee Role",
-        "EXIT",
+        'View All Employees',
+        'View All Roles',
+        'View All Departments',
+        'Add Employee',
+        'Add Role',
+        'Add Department',
+        'Update Employee Role',
+        'EXIT',
       ],
     });
 
+
     switch (answer.start) {
-      case "View All Employees":
-        await viewEmployees(); // Make sure to await viewEmployees()
+      case 'View All Employees':
+        await viewEmployees();
         break;
 
-      case "View All Roles":
-        await viewRoles(); // Make sure to await viewRoles()
+      case 'View All Roles':
+        await viewRoles();
         break;
 
-      case "View All Departments":
-        await viewDepartments(); // Make sure to await viewDepartments()
+      case 'View All Departments':
+        await viewDepartments();
         break;
 
-      case "Add Employee":
-        await addEmployee(); // Make sure to await addEmployee()
+      case 'Add Employee':
+        await addEmployee();
         break;
 
-      case "Add Role":
-        await addRole(); // Implement this function
+      case 'Add Role':
+        await addRole(); 
         break;
 
-      case "Add Department":
+      case 'Add Department':
         await addDepartment();
         break;
 
-      case "Update Employee Role":
-        await updateEmployee(); // Implement this function
+      case 'Update Employee Role':
+        await updateEmployee(); 
         break;
 
-      case "EXIT":
-        console.log(
-          "Thank you for using the company search database. Have a nice day!"
-        );
-        db.end(); // Close the database connection
+      case 'EXIT':
+        console.log('Thank you for using the employee tracker. Have a nice day!');
+        await db.end(); 
+        process.exit(0); // Exit the program
     }
   } catch (err) {
-    throw err;
+    console.error('Error:', err);
   }
 }
 
@@ -113,17 +114,18 @@ function viewDepartments() {
 }
 
 // Function for adding a department
-function addDepartment() {
-  prompt({
-    name: "department",
-    type: "input",
-    message: "What department would you like to add today?",
-  })
+async function addDepartment() {
+  inquirer
+    .prompt({
+      name: 'department',
+      type: 'input',
+      message: 'What department would you like to add today?',
+    })
     .then(function (answer) {
-      let queryStr = "INSERT INTO departments (name) VALUES (?)";
+      let queryStr = 'INSERT INTO departments (name) VALUES (?)';
       db.query(queryStr, answer.department, function (err, res) {
         if (err) throw err;
-        console.log(answer.department + " has been added.");
+        console.log(answer.department + ' has been added.');
         mainMenu();
       });
     });
@@ -181,3 +183,4 @@ async function addEmployee() {
     throw err;
   }
 }
+connectToDatabase();
