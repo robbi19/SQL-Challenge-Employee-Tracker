@@ -1,4 +1,4 @@
-const util = require('util');
+import util from 'util';
 const consoleTable = require("console.table");
 const { createConnection } = require('mysql2');
 const { promisify } = require('util');
@@ -125,7 +125,6 @@ function addDepartment() {
 }
 
 
-// function to add an Employee
 function addEmployee() {
   const roles = [];
   const managers = [];
@@ -142,38 +141,41 @@ function addEmployee() {
         managers.push(res[i].first_name + " " + res[i].last_name);
       }
       prompt([
-          {
-            name: "firstName",
-            type: "input",
-            message: " new employee's first name?",
-          },
-          {
-            name: "lastName",
-            type: "input",
-            message: "new employee's last name?",
-          },
-          {
-            name: "title",
-            type: "list",
-            message: " new employee's title?",
-            choices: roles,
-          },
-          {
-            name: "manager",
-            type: "list",
-            message: "new employee's manager?",
-            choices: managers,
-          },
-        ])
-        .then(function (answer) {
-          const queryStr =
-            "INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?, ?, (SELECT id FROM roles WHERE title = ?), (SELECT id FROM employees AS e WHERE CONCAT(e.first_name, ' ', e.last_name) = ?))";
-          connection.query(
-            queryStr,
-            [answer.firstName, answer.lastName, answer.title, answer.manager],
-            function (err, res) {
-              if (err) throw err;
-              console.log("Great !Successfully added an employee!");
-              mainMenu();
-
-            }}
+        {
+          name: "firstName",
+          type: "input",
+          message: "new employee's first name?",
+        },
+        {
+          name: "lastName",
+          type: "input",
+          message: "new employee's last name?",
+        },
+        {
+          name: "title",
+          type: "list",
+          message: "new employee's title?",
+          choices: roles,
+        },
+        {
+          name: "manager",
+          type: "list",
+          message: "new employee's manager?",
+          choices: managers,
+        },
+      ]).then(function (answer) {
+        const queryStr =
+          "INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?, ?, (SELECT id FROM roles WHERE title = ?), (SELECT id FROM employees AS e WHERE CONCAT(e.first_name, ' ', e.last_name) = ?))";
+        connection.query(
+          queryStr,
+          [answer.firstName, answer.lastName, answer.title, answer.manager],
+          function (err, res) {
+            if (err) throw err;
+            console.log("Great! Successfully added an employee!");
+            mainMenu();
+          }
+        );
+      });
+    });
+  });
+}
