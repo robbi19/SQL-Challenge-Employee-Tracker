@@ -10,11 +10,10 @@
   "version": "1.0.0",
   "description": "track employee data",
   "main": "index.js",
-  "type": "commonjs",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js"
-
   },
   "repository": {
     "type": "git",
@@ -31,6 +30,3 @@
   },
   "keywords": []
 }
-
-
-

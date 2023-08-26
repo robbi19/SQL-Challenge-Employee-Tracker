@@ -1,80 +1,85 @@
-import util from 'util';
-const consoleTable = require("console.table");
-const { createConnection } = require('mysql2');
-const { promisify } = require('util');
-const { prompt } = require('inquirer');
+import util from 'util'; 
+import consoleTable from 'console.table'; 
+import { createConnection } from 'mysql2/promise';
+import inquirer from 'inquirer';
 
 // Connect to database
 const db = createConnection({
   host: 'localhost',
   user: 'root',
   password: '',
-  database: 'employee_tracker_db'
+  database: 'employee_tracker_db',
 });
-
-db.query = util.promisify(db.query);
 
 // Connect database
-db.connect(function (err) {
-  if (err) throw err;
-  console.log("Connected to employee_tracker_db database.");
-  mainMenu();
-});
+async function connectToDatabase() {
+  try {
+    await db.connect();
+    console.log('Connected to employee_tracker_db database.');
+    mainMenu();
+  } catch (err) {
+    throw err;
+  }
+}
+connectToDatabase();
 
 // Main Menu function
-function mainMenu() {
-  prompt({
-    name: "start",
-    type: "rawlist",
-    message: "What would you like to do?",
-    choices: [
-      "View All Employees",
-      "View All Roles",
-      "View All Departments",
-      "Add Employee",
-      "Add Role",
-      "Add Department",
-      "Update Employee Role",
-      "EXIT",
-    ],
-  })
-    .then(function (answer) {
-      switch (answer.start) {
-        case "View All Employees":
-          viewEmployees();
-          break;
-
-        case "View All Roles":
-          viewRoles();
-          break;
-
-        case "View All Departments":
-          viewDepartments();
-          break;
-
-        case "Add Employee":
-          addEmployee(); // Implement this function
-          break;
-
-        case "Add Role":
-          addRole(); // Implement this function
-          break;
-
-        case "Add Department":
-          addDepartment();
-          break;
-
-        case "Update Employee Role":
-          updateEmployee(); // Implement this function
-          break;
-
-        case "EXIT":
-          console.log(
-            "Thank you for using the company search database. Have a nice day!"
-          );
-          db.end(); // Close the database connection
-      }
+async function mainMenu() { 
+  try {
+    const answer = await inquirer.prompt({
+      name: "start",
+      type: "rawlist",
+      message: "What would you like to do?",
+      choices: [
+        "View All Employees",
+        "View All Roles",
+        "View All Departments",
+        "Add Employee",
+        "Add Role",
+        "Add Department",
+        "Update Employee Role",
+        "EXIT",
+      ],
     });
+
+    switch (answer.start) {
+      case "View All Employees":
+        await viewEmployees(); // Make sure to await viewEmployees()
+        break;
+
+      case "View All Roles":
+        await viewRoles(); // Make sure to await viewRoles()
+        break;
+
+      case "View All Departments":
+        await viewDepartments(); // Make sure to await viewDepartments()
+        break;
+
+      case "Add Employee":
+        await addEmployee(); // Make sure to await addEmployee()
+        break;
+
+      case "Add Role":
+        await addRole(); // Implement this function
+        break;
+
+      case "Add Department":
+        await addDepartment();
+        break;
+
+      case "Update Employee Role":
+        await updateEmployee(); // Implement this function
+        break;
+
+      case "EXIT":
+        console.log(
+          "Thank you for using the company search database. Have a nice day!"
+        );
+        db.end(); // Close the database connection
+    }
+  } catch (err) {
+    throw err;
+  }
 }
 
 function viewEmployees() {
@@ -124,58 +129,55 @@ function addDepartment() {
     });
 }
 
-
-function addEmployee() {
+async function addEmployee() {
   const roles = [];
   const managers = [];
-  const queryRoles = "SELECT title FROM roles;";
-  db.query(queryRoles, function (err, res) {
-    if (err) throw err;
-    for (let i = 0; i < res.length; i++) {
-      roles.push(res[i].title);
+  try {
+    // Use async/await to fetch roles and managers
+    const [roleRows] = await db.query("SELECT title FROM roles;");
+    const [managerRows] = await db.query("SELECT first_name, last_name FROM employees");
+
+    for (const row of roleRows) {
+      roles.push(row.title);
     }
-    const queryManager = "SELECT first_name, last_name FROM employees";
-    db.query(queryManager, function (err, res) {
-      if (err) throw err;
-      for (let i = 0; i < res.length; i++) {
-        managers.push(res[i].first_name + " " + res[i].last_name);
-      }
-      prompt([
-        {
-          name: "firstName",
-          type: "input",
-          message: "new employee's first name?",
-        },
-        {
-          name: "lastName",
-          type: "input",
-          message: "new employee's last name?",
-        },
-        {
-          name: "title",
-          type: "list",
-          message: "new employee's title?",
-          choices: roles,
-        },
-        {
-          name: "manager",
-          type: "list",
-          message: "new employee's manager?",
-          choices: managers,
-        },
-      ]).then(function (answer) {
-        const queryStr =
-          "INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?, ?, (SELECT id FROM roles WHERE title = ?), (SELECT id FROM employees AS e WHERE CONCAT(e.first_name, ' ', e.last_name) = ?))";
-        connection.query(
-          queryStr,
-          [answer.firstName, answer.lastName, answer.title, answer.manager],
-          function (err, res) {
-            if (err) throw err;
-            console.log("Great! Successfully added an employee!");
-            mainMenu();
-          }
-        );
-      });
-    });
-  });
+    for (const row of managerRows) {
+      managers.push(row.first_name + ' ' + row.last_name);
+    }
+
+    const answers = await prompt([
+      {
+        name: 'firstName',
+        type: 'input',
+        message: "new employee's first name?",
+      },
+      {
+        name: 'lastName',
+        type: 'input',
+        message: "new employee's last name?",
+      },
+      {
+        name: 'title',
+        type: 'list',
+        message: "new employee's title?",
+        choices: roles,
+      },
+      {
+        name: 'manager',
+        type: 'list',
+        message: "new employee's manager?",
+        choices: managers,
+      },
+    ]);
+
+    // Insert the new employee using async/await
+    const [employeeRows] = await db.query(
+      'INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?, ?, (SELECT id FROM roles WHERE title = ?), (SELECT id FROM employees AS e WHERE CONCAT(e.first_name, " ", e.last_name) = ?))',
+      [answers.firstName, answers.lastName, answers.title, answers.manager]
+    );
+
+    console.log('Great! Successfully added an employee!');
+    mainMenu();
+  } catch (err) {
+    throw err;
+  }
 }
