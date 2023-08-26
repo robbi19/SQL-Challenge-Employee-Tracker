@@ -1,15 +1,20 @@
 {
+  "dependencies": {
+    "console.table": "^0.10.0",
+    "inquirer": "^9.1.2",
+    "jshint": "^2.13.5",
+    "mysql": "^2.18.1",
+    "mysql2": "^2.3.3"
+  },
   "name": "robbin-sql-challenge-employeetracker",
   "version": "1.0.0",
   "description": "track employee data",
-  "main": "server.js",
+  "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js",
-    "migrate": "mysql db/employees.db < db/schema.sql",
-    "seed": "mysql db/employees.db < db/seeds.sql",
-    "db": "mysql db/employees.db",
-    "watch": "nodemon server.js"
+    "start": "node index.js"
+
   },
   "repository": {
     "type": "git",
@@ -21,17 +26,11 @@
     "url": "https://github.com/robbi19/SQL-Challenge-Employee-Tracker/issues"
   },
   "homepage": "https://github.com/robbi19/SQL-Challenge-Employee-Tracker#readme",
-  "dependencies": {
-    "chalk": "^5.3.0",
-    "console-table": "^0.1.2",
-    "console.table": "^0.10.0",
-    "express": "^4.18.2",
-    "figlet": "^1.6.0",
-    "inquirer": "^8.2.6",
-    "mysql": "^2.18.1",
-    "mysql2": "^3.6.0",
-    "nodemon": "^3.0.1",
-    "validator": "^13.11.0"
+  "devDependencies": {
+    "@types/mysql": "^2.15.21"
   },
   "keywords": []
 }
+
+
+
