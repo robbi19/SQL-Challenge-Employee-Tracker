@@ -1,7 +1,5 @@
-import util from 'util';
-import consoleTable from 'console.table';
-import { createConnection } from 'mysql2/promise';
-import { prompt } from 'inquirer';
+const { DB } = require('./db');
+const { prompt } = require('inquirer');
 
 // Connect to the database
 const db = createConnection({
