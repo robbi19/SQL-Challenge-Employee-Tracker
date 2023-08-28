@@ -1,32 +1,10 @@
 {
   "dependencies": {
     "console.table": "^0.10.0",
+    "express": "^4.18.2",
     "inquirer": "^9.2.10",
-    "jshint": "^2.13.5",
     "mysql": "^2.18.1",
-    "mysql2": "^2.3.3"
-  },
-  "name": "robbin-sql-challenge-employeetracker",
-  "version": "1.0.0",
-  "description": "track employee data",
-  "main": "index.js",
-  
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/robbi19/SQL-Challenge-Employee-Tracker.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/robbi19/SQL-Challenge-Employee-Tracker/issues"
-  },
-  "homepage": "https://github.com/robbi19/SQL-Challenge-Employee-Tracker#readme",
-  "devDependencies": {
-    "@types/mysql": "^2.15.21"
-  },
-  "keywords": []
+    "mysql2": "^3.6.0",
+    "util": "^0.12.5"
+  }
 }
