@@ -9,7 +9,7 @@ const db = mysql.createConnection(
   {
       host: 'localhost',
       user: 'root',
-      password: 'ryanloveus1234!@#$',
+      password: 'Ryanloveus1234!@#$',
       database: 'employee_tracker_db'
   },
   console.log('\u001b[1;32m----connected successfully!----')
@@ -23,7 +23,7 @@ db.connect(function (err){
 db.query = util.promisify(db.query);
 
 const runPrompt = async () => {
-  let selection = await inquirer.prompt({
+  let selection = await prompt({
       type: 'list',
       name: 'choice',
       message: '\u001b[1;43mWhat would you like to do next?',
@@ -99,7 +99,7 @@ viewAllEmp = async () => {
 };
 
 addDept = async () => {
-  const newDept = inquirer.prompt([
+  const newDept = prompt([
       {
       type: 'input',
       name: 'name',
@@ -125,7 +125,7 @@ addDept = async () => {
 };
 
 addRole = async () => {
-  const newRole = inquirer.prompt([
+  const newRole = prompt([
       {
           type: 'input',
           name: 'title',
@@ -158,7 +158,7 @@ addRole = async () => {
       const deptView = db.query('SELECT id, name FROM department', (err, res) => {
           if (err) return (err); 
           const deptChoices = res.map(({ id, name }) => ({ name: name, value: id }));
-      const roleDeptChoice = inquirer.prompt([
+      const roleDeptChoice = prompt([
           {
               type: 'list',
               name: 'choice',
@@ -181,7 +181,7 @@ addRole = async () => {
 };
 
 addEmp = async () => {
-  const newEmployee = inquirer.prompt([
+  const newEmployee = prompt([
       {
           type: 'input',
           name: 'firstName',
@@ -216,7 +216,7 @@ addEmp = async () => {
           if (err) return (err);
           const newEmployeeRole = res.map(({ id, title }) => ({ name: title, value: id }));
 
-          const roleChoice = inquirer.prompt([
+          const roleChoice = prompt([
               {
                   type: 'list',
                   name: 'choice',
@@ -232,7 +232,7 @@ addEmp = async () => {
                   const nullArray = ['NULL'];
                   const managerList = res.map(({ id, first_name, last_name }) => ({ name: first_name + ' ' + last_name, value: id}));
               
-                  const managerChoice = inquirer.prompt([
+                  const managerChoice = prompt([
                       {
                           type: 'confirm',
                           name: 'confirmation',
@@ -271,7 +271,7 @@ updateEmpRole = async () => {
       if (err) return console.log(err);
       const employeeList = res.map(({ id, first_name, last_name }) => ({ name: first_name + ' ' + last_name, value: id }));
 
-      const employeeChoice = inquirer.prompt([
+      const employeeChoice = prompt([
           {
               type: 'list',
               name: 'choice',
@@ -287,7 +287,7 @@ updateEmpRole = async () => {
               if (err) return console.log(err);
               const roleList = res.map(({ id, title }) => ({ name: title, value: id }));
 
-              const newRoleChoice = inquirer.prompt([
+              const newRoleChoice = prompt([
                   {
                       type: 'list',
                       name: 'choice',
